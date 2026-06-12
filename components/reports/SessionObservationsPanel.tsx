@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { ParticipantAvatar } from "@/components/reports/ParticipantAvatar";
 import { SessionStatusBadge } from "@/components/ui/status-badge";
+import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -72,6 +73,7 @@ export function SessionObservationsPanel({
                 <TableHead>Estado</TableHead>
                 <TableHead>Éxito</TableHead>
                 <TableHead>Situaciones</TableHead>
+                <TableHead>Documentación</TableHead>
                 <TableHead className="text-right">Detalle</TableHead>
               </TableRow>
             </TableHeader>
@@ -125,14 +127,43 @@ export function SessionObservationsPanel({
                       )}
                     </TableCell>
                     <TableCell>{session.executions.length}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {session.hasRecording && (
+                          <Badge variant="outline" className="text-xs">
+                            Grabación
+                          </Badge>
+                        )}
+                        {session.findingsCount > 0 && (
+                          <Badge variant="outline" className="text-xs">
+                            {session.findingsCount} hallazgo
+                            {session.findingsCount === 1 ? "" : "s"}
+                          </Badge>
+                        )}
+                        {!session.hasRecording && session.findingsCount === 0 && (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell className="text-right">
-                      <Link
-                        href={`/tests/${testId}/reports/sessions/${session.sessionId}`}
-                        className={buttonVariants({ variant: "outline", size: "sm" })}
-                        onClick={(event) => event.stopPropagation()}
-                      >
-                        Ver observaciones
-                      </Link>
+                      <div className="flex justify-end gap-1">
+                        {session.status === "COMPLETED" && (
+                          <Link
+                            href={`/tests/${testId}/sessions/${session.sessionId}/synthesis`}
+                            className={buttonVariants({ variant: "default", size: "sm" })}
+                            onClick={(event) => event.stopPropagation()}
+                          >
+                            Síntesis
+                          </Link>
+                        )}
+                        <Link
+                          href={`/tests/${testId}/reports/sessions/${session.sessionId}`}
+                          className={buttonVariants({ variant: "outline", size: "sm" })}
+                          onClick={(event) => event.stopPropagation()}
+                        >
+                          Ver observaciones
+                        </Link>
+                      </div>
                     </TableCell>
                   </TableRow>
                 );

@@ -85,41 +85,75 @@ model Task {
 }
 
 model TestSession {
-  id               String          @id @default(uuid())
+  id               String                   @id @default(uuid())
   testId           String
-  test             UsabilityTest   @relation(fields: [testId], references: [id], onDelete: Cascade)
+  test             UsabilityTest            @relation(fields: [testId], references: [id], onDelete: Cascade)
   participantId    String
-  participant      Participant     @relation(fields: [participantId], references: [id], onDelete: Cascade)
-  currentTaskIndex Int             @default(0)
-  status           SessionStatus   @default(PENDING)
+  participant      Participant              @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  currentTaskIndex Int                      @default(0)
+  status           SessionStatus            @default(PENDING)
+  recordingUrl     String?
+  recordingNotes   String?                  @db.Text
   executions       TaskExecution[]
+  recordingMarkers SessionRecordingMarker[]
   startedAt        DateTime?
   completedAt      DateTime?
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
 
   @@unique([testId, participantId])
 }
 
+model SessionRecordingMarker {
+  id           String         @id @default(uuid())
+  sessionId    String
+  session      TestSession    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  executionId  String?
+  execution    TaskExecution? @relation(fields: [executionId], references: [id], onDelete: SetNull)
+  orderIndex   Int
+  offsetSeconds Int
+  label        String
+  notes        String?        @db.Text
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
 model TaskExecution {
-  id                     String      @id @default(uuid())
+  id                     String                   @id @default(uuid())
   sessionId              String
-  session                TestSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  session                TestSession              @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   taskId                 String
-  task                   Task        @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  task                   Task                     @relation(fields: [taskId], references: [id], onDelete: Cascade)
   result                 TaskResult?
   taskCompleted          Boolean?
   timeOnTaskSeconds      Int?
   subjectiveSatisfaction Int?
-  nonCriticalErrorCount  Int                  @default(0)
+  nonCriticalErrorCount  Int                      @default(0)
   nonCriticalSeverity    NonCriticalSeverity?
-  isFalseCompletion      Boolean              @default(false)
-  helpRequested          Boolean              @default(false)
-  thinkAloudNotes        String?              @db.Text
+  isFalseCompletion      Boolean                  @default(false)
+  helpRequested          Boolean                  @default(false)
+  thinkAloudNotes        String?                  @db.Text
+  findings               ExecutionFinding[]
+  recordingMarkers       SessionRecordingMarker[]
   startedAt              DateTime?
   completedAt            DateTime?
-  createdAt              DateTime    @default(now())
-  updatedAt              DateTime    @updatedAt
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
 
   @@unique([sessionId, taskId])
+}
+
+model ExecutionFinding {
+  id                     String        @id @default(uuid())
+  executionId            String
+  execution              TaskExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
+  orderIndex             Int
+  title                  String
+  observation            String        @db.Text
+  recommendation         String        @db.Text
+  screenshotPath         String?
+  screenshotOriginalName String?
+  recordingOffsetSeconds Int?
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
 }

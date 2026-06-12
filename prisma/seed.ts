@@ -142,6 +142,45 @@ async function main() {
     });
   }
 
+  await prisma.testSession.update({
+    where: { id: session.id },
+    data: {
+      recordingUrl: "https://www.loom.com/share/ejemplo-grabacion",
+      recordingNotes:
+        "Revisión post-sesión: el participante mostró dudas recurrentes en acciones de confirmación.",
+    },
+  });
+
+  const secondExecution = await prisma.taskExecution.findFirst({
+    where: { sessionId: session.id, taskId: tasks[1].id },
+  });
+
+  if (secondExecution) {
+    await prisma.sessionRecordingMarker.create({
+      data: {
+        sessionId: session.id,
+        executionId: secondExecution.id,
+        orderIndex: 0,
+        offsetSeconds: 154,
+        label: "Duda al guardar cambios",
+        notes: "El participante busca un botón de confirmación más visible.",
+      },
+    });
+
+    await prisma.executionFinding.create({
+      data: {
+        executionId: secondExecution.id,
+        orderIndex: 0,
+        title: "Botón de guardar poco visible",
+        observation:
+          "El participante no identificó de inmediato dónde confirmar el cambio de teléfono y pidió ayuda al moderador.",
+        recommendation:
+          "Convertir la acción principal en un botón primario fijo al final del formulario, con la etiqueta «Guardar cambios».",
+        recordingOffsetSeconds: 154,
+      },
+    });
+  }
+
   console.log("Seed completado:");
   console.log(`- Test: ${test.projectName} (${test.id})`);
   console.log(`- Token presentación: ${test.presentationToken}`);

@@ -10,6 +10,7 @@ import {
   getResultLabel,
   getSatisfactionLabel,
 } from "@/lib/execution-rules";
+import { formatOffsetSeconds } from "@/lib/time-format";
 import {
   buildReportSummary,
   formatSeconds,
@@ -21,6 +22,14 @@ import {
 type ExecutionWithRelations = TaskExecution & {
   task: Task;
   session: TestSession & { participant: { code: string; notes: string | null } };
+  findings?: Array<{
+    id: string;
+    title: string;
+    observation: string;
+    recommendation: string;
+    screenshotPath: string | null;
+    recordingOffsetSeconds: number | null;
+  }>;
 };
 
 export type ReportInsight = {
@@ -34,6 +43,15 @@ export type TaskDetailMetrics = TaskMetrics & {
   successCriterion: string;
   maxTimeMinutes: number;
   exceedsMaxTime: boolean;
+};
+
+export type DocumentedFinding = {
+  id: string;
+  title: string;
+  observation: string;
+  recommendation: string;
+  screenshotUrl: string | null;
+  recordingOffsetFormatted: string | null;
 };
 
 export type ExecutionObservation = {
@@ -58,6 +76,8 @@ export type ExecutionObservation = {
   nonCriticalErrorCount: number;
   nonCriticalSeverityLabel: string;
   completedAt: string | null;
+  findingsCount: number;
+  findings: DocumentedFinding[];
 };
 
 export type SessionObservations = {
@@ -67,6 +87,11 @@ export type SessionObservations = {
   status: string;
   startedAt: string | null;
   completedAt: string | null;
+  recordingUrl: string | null;
+  recordingNotes: string | null;
+  markersCount: number;
+  findingsCount: number;
+  hasRecording: boolean;
   executions: ExecutionObservation[];
 };
 
@@ -331,7 +356,12 @@ function computeVerdict(
 
 function buildSessionObservations(
   sessions: Array<
-    TestSession & { participant: { code: string; notes: string | null } }
+    TestSession & {
+      participant: { code: string; notes: string | null };
+      recordingUrl?: string | null;
+      recordingNotes?: string | null;
+      recordingMarkers?: Array<{ id: string }>;
+    }
   >,
   executions: ExecutionWithRelations[],
 ): SessionObservations[] {
@@ -341,6 +371,55 @@ function buildSessionObservations(
         .filter((e) => e.sessionId === session.id && e.result !== null)
         .sort((a, b) => a.task.orderIndex - b.task.orderIndex);
 
+      const mappedExecutions = sessionExecs.map((e) => {
+        const completed =
+          e.taskCompleted ?? (e.result ? e.result !== "CRITICAL_ERROR" : false);
+        const findings = (e.findings ?? []).map((finding) => ({
+          id: finding.id,
+          title: finding.title,
+          observation: finding.observation,
+          recommendation: finding.recommendation,
+          screenshotUrl: finding.screenshotPath
+            ? `/api/evidence/${finding.screenshotPath}`
+            : null,
+          recordingOffsetFormatted:
+            finding.recordingOffsetSeconds !== null
+              ? formatOffsetSeconds(finding.recordingOffsetSeconds)
+              : null,
+        }));
+
+        return {
+          executionId: e.id,
+          sessionId: e.sessionId,
+          participantCode: e.session.participant.code,
+          situationNumber: e.task.orderIndex + 1,
+          situationLabel: `Situación ${e.task.orderIndex + 1}`,
+          scenarioNarrative: e.task.scenarioNarrative,
+          goalDescription: e.task.goalDescription,
+          result: e.result,
+          resultLabel: getResultLabel(e.result),
+          taskCompleted: completed,
+          timeOnTaskSeconds: e.timeOnTaskSeconds,
+          timeOnTaskFormatted:
+            e.timeOnTaskSeconds !== null ? formatSeconds(e.timeOnTaskSeconds) : "—",
+          subjectiveSatisfaction: e.subjectiveSatisfaction,
+          satisfactionLabel: e.task.askSatisfaction
+            ? getSatisfactionLabel(e.subjectiveSatisfaction) || "—"
+            : "No aplicable",
+          askSatisfaction: e.task.askSatisfaction,
+          thinkAloudNotes: e.thinkAloudNotes,
+          helpRequested: e.helpRequested,
+          isFalseCompletion: e.isFalseCompletion,
+          nonCriticalErrorCount: e.nonCriticalErrorCount,
+          nonCriticalSeverityLabel: getNonCriticalSeverityLabel(e.nonCriticalSeverity),
+          completedAt: e.completedAt?.toISOString() ?? null,
+          findingsCount: findings.length,
+          findings,
+        };
+      });
+
+      const findingsCount = mappedExecutions.reduce((sum, item) => sum + item.findingsCount, 0);
+
       return {
         sessionId: session.id,
         participantCode: session.participant.code,
@@ -348,39 +427,12 @@ function buildSessionObservations(
         status: session.status,
         startedAt: session.startedAt?.toISOString() ?? null,
         completedAt: session.completedAt?.toISOString() ?? null,
-        executions: sessionExecs.map((e) => {
-          const completed =
-            e.taskCompleted ??
-            (e.result ? e.result !== "CRITICAL_ERROR" : false);
-          return {
-            executionId: e.id,
-            sessionId: e.sessionId,
-            participantCode: e.session.participant.code,
-            situationNumber: e.task.orderIndex + 1,
-            situationLabel: `Situación ${e.task.orderIndex + 1}`,
-            scenarioNarrative: e.task.scenarioNarrative,
-            goalDescription: e.task.goalDescription,
-            result: e.result,
-            resultLabel: getResultLabel(e.result),
-            taskCompleted: completed,
-            timeOnTaskSeconds: e.timeOnTaskSeconds,
-            timeOnTaskFormatted:
-              e.timeOnTaskSeconds !== null ? formatSeconds(e.timeOnTaskSeconds) : "—",
-            subjectiveSatisfaction: e.subjectiveSatisfaction,
-            satisfactionLabel: e.task.askSatisfaction
-              ? getSatisfactionLabel(e.subjectiveSatisfaction) || "—"
-              : "No aplicable",
-            askSatisfaction: e.task.askSatisfaction,
-            thinkAloudNotes: e.thinkAloudNotes,
-            helpRequested: e.helpRequested,
-            isFalseCompletion: e.isFalseCompletion,
-            nonCriticalErrorCount: e.nonCriticalErrorCount,
-            nonCriticalSeverityLabel: getNonCriticalSeverityLabel(
-              e.nonCriticalSeverity,
-            ),
-            completedAt: e.completedAt?.toISOString() ?? null,
-          };
-        }),
+        recordingUrl: session.recordingUrl ?? null,
+        recordingNotes: session.recordingNotes ?? null,
+        markersCount: session.recordingMarkers?.length ?? 0,
+        findingsCount,
+        hasRecording: Boolean(session.recordingUrl),
+        executions: mappedExecutions,
       };
     })
     .filter((s) => s.executions.length > 0)
@@ -393,7 +445,12 @@ export function buildExecutiveReport(
   participantCount: number,
   completedSessions: number,
   sessions: Array<
-    TestSession & { participant: { code: string; notes: string | null } }
+    TestSession & {
+      participant: { code: string; notes: string | null };
+      recordingUrl?: string | null;
+      recordingNotes?: string | null;
+      recordingMarkers?: Array<{ id: string }>;
+    }
   > = [],
 ): ExecutiveReport {
   const summary = buildReportSummary(

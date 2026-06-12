@@ -197,13 +197,21 @@ export function ParticipantsManager({
                             </Link>
                           )}
                           {session?.status === "COMPLETED" && (
-                            <Link
-                              href={`/tests/${testId}/reports/sessions/${session.id}`}
-                              className={buttonVariants({ variant: "outline", size: "sm" })}
-                            >
-                              <FileText className="size-3.5" />
-                              Resultados
-                            </Link>
+                            <>
+                              <Link
+                                href={`/tests/${testId}/sessions/${session.id}/synthesis`}
+                                className={buttonVariants({ variant: "default", size: "sm" })}
+                              >
+                                Síntesis
+                              </Link>
+                              <Link
+                                href={`/tests/${testId}/reports/sessions/${session.id}`}
+                                className={buttonVariants({ variant: "outline", size: "sm" })}
+                              >
+                                <FileText className="size-3.5" />
+                                Resultados
+                              </Link>
+                            </>
                           )}
                           <Button
                             size="sm"

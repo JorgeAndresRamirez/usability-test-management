@@ -15,7 +15,12 @@ export default async function ReportsPage({ params }: PageProps) {
     where: { id: testId },
     include: {
       tasks: { orderBy: { orderIndex: "asc" } },
-      sessions: { include: { participant: true } },
+      sessions: {
+        include: {
+          participant: true,
+          recordingMarkers: true,
+        },
+      },
       _count: { select: { participants: true } },
     },
   });
@@ -27,6 +32,7 @@ export default async function ReportsPage({ params }: PageProps) {
     include: {
       task: true,
       session: { include: { participant: true } },
+      findings: { orderBy: { orderIndex: "asc" } },
     },
   });
 

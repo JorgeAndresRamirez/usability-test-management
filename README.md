@@ -28,7 +28,15 @@ Soporta Think Aloud, eficacia vs éxito, errores críticos/no críticos, satisfa
 - Registro de resultado: éxito, error no crítico, error crítico
 - Métricas ampliadas: completitud, gravedad de errores NC, falsa finalización, solicitud de ayuda
 - Flujo separado: **Guardar situación** / **Siguiente situación** / **Detener cronómetro**
-- Notas Think Aloud por situación
+
+### Síntesis post-sesión
+- Tras completar una sesión, documentar **enlace de grabación** (Loom, Zoom, Drive, etc.)
+- **Marcadores de tiempo** sobre la grabación, opcionalmente vinculados a una situación
+- **Hallazgos documentados** por situación: título, observación, recomendación, captura de pantalla y momento en la grabación
+- Las capturas se guardan en `storage/evidence/` (local; no versionado en git)
+- Exportación **PDF para diseño/desarrollo** con evidencias embebidas
+- Ruta: `/tests/[testId]/sessions/[sessionId]/synthesis`
+- Think Aloud en vivo se conserva; los hallazgos son la capa curada y accionable para diseño/dev
 
 ### Vista participante (M4)
 - Acceso por token único (`/p/[token]`)
@@ -152,7 +160,8 @@ Con Docker, `DATABASE_URL` y `DIRECT_URL` pueden apuntar a la misma URL.
 | **M3 — Ejecución** | `/tests/[testId]/sessions/[sessionId]/run` | Panel en vivo del moderador |
 | **M4 — Participante** | `/p/[presentationToken]` | Vista limpia para el usuario en prueba |
 | **M5 — Reportes** | `/tests/[testId]/reports` | Análisis, gráficos, exportación |
-| **M5 — Detalle sesión** | `/tests/[testId]/reports/sessions/[sessionId]` | Observaciones por participante |
+| **M5 — Detalle sesión** | `/tests/[testId]/reports/sessions/[sessionId]` | Observaciones y hallazgos por participante |
+| **M5 — Síntesis** | `/tests/[testId]/sessions/[sessionId]/synthesis` | Documentar grabación, marcadores y hallazgos |
 
 ### API REST (resumen)
 
@@ -161,8 +170,14 @@ Con Docker, `DATABASE_URL` y `DIRECT_URL` pueden apuntar a la misma URL.
 | `GET/POST` | `/api/tests` | Listar / crear proyectos |
 | `GET/PATCH/DELETE` | `/api/tests/[testId]` | Detalle, actualizar, eliminar |
 | `POST` | `/api/tests/[testId]/clone` | Duplicar proyecto (solo configuración, sin participantes ni resultados) |
-| `GET` | `/api/tests/[testId]/export` | Exportar proyecto completo (JSON) |
+| `GET` | `/api/tests/[testId]/export` | Exportar proyecto completo (JSON v2, incluye síntesis y capturas) |
 | `POST` | `/api/tests/import` | Importar proyecto desde JSON |
+| `GET/PATCH` | `/api/sessions/[sessionId]/synthesis` | Leer / actualizar registro audiovisual |
+| `GET/POST` | `/api/sessions/[sessionId]/recording-markers` | Marcadores de tiempo |
+| `GET/POST` | `/api/sessions/[sessionId]/executions/[executionId]/findings` | Hallazgos por situación |
+| `POST/DELETE` | `.../findings/[findingId]/screenshot` | Subir / eliminar captura |
+| `GET` | `/api/evidence/[...path]` | Servir capturas subidas |
+| `GET` | `/api/tests/[testId]/reports/sessions/[sessionId]/export/findings-pdf` | PDF de hallazgos para diseño |
 | `GET/POST` | `/api/tests/[testId]/participants` | Participantes |
 | `GET/POST` | `/api/tests/[testId]/tasks` | Situaciones |
 | `PATCH/DELETE` | `/api/tests/[testId]/tasks/[taskId]` | Editar / eliminar situación |
@@ -173,6 +188,19 @@ Con Docker, `DATABASE_URL` y `DIRECT_URL` pueden apuntar a la misma URL.
 | `GET` | `/api/tests/[testId]/reports` | Informe ejecutivo (JSON) |
 | `GET` | `/api/tests/[testId]/reports/export/pdf` | Descarga PDF |
 | `GET` | `/api/tests/[testId]/reports/export/csv` | Descarga CSV |
+
+### Exportar / importar proyectos (JSON)
+
+Formato actual: `moderated-usability-test` (versiones **1** y **2**).
+
+| Versión | Contenido |
+|---------|-----------|
+| **v1** | Metadatos, situaciones, participantes, sesiones y ejecuciones |
+| **v2** | Todo lo anterior + síntesis (grabación, marcadores, hallazgos y capturas en base64) |
+
+Exportar desde el dashboard (**Exportar** en cada proyecto). Importar con **Importar proyecto**.
+
+**Exports antiguos** con `"format": "sica-usability-test"` no son válidos tal cual: cambia el campo a `"moderated-usability-test"` antes de importar (el resto del JSON v1 suele ser compatible).
 
 ---
 
@@ -289,7 +317,18 @@ npm run db:generate
 npm run db:seed
 ```
 
-Crea un proyecto «Plataforma de reservas en línea — Piloto» con situaciones, participante y sesión de ejemplo.
+Crea un proyecto «Plataforma de reservas en línea — Piloto» con situaciones, participante, sesión de ejemplo y un hallazgo documentado en síntesis.
+
+### Error `Unknown field recordingMarkers` (o campos de síntesis)
+
+El cliente Prisma en memoria quedó desactualizado tras cambiar el esquema.
+
+```bash
+npx prisma generate
+# Reinicia el servidor de desarrollo (Ctrl+C y npm run dev)
+```
+
+`npm run dev` ejecuta `prisma generate` automáticamente antes de arrancar.
 
 ---
 

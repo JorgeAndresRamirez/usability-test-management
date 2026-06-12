@@ -10,6 +10,25 @@ const taskTransferSchema = z.object({
   askSatisfaction: z.boolean(),
 });
 
+const findingTransferSchema = z.object({
+  taskOrderIndex: z.number().int().min(0),
+  orderIndex: z.number().int().min(0),
+  title: z.string().min(1),
+  observation: z.string().min(1),
+  recommendation: z.string().min(1),
+  recordingOffsetSeconds: z.number().int().min(0).nullable().optional(),
+  screenshotOriginalName: z.string().nullable().optional(),
+  screenshotBase64: z.string().nullable().optional(),
+});
+
+const markerTransferSchema = z.object({
+  orderIndex: z.number().int().min(0),
+  offsetSeconds: z.number().int().min(0),
+  label: z.string().min(1),
+  notes: z.string().nullable().optional(),
+  taskOrderIndex: z.number().int().min(0).nullable().optional(),
+});
+
 const executionTransferSchema = z.object({
   taskOrderIndex: z.number().int().min(0),
   result: z.enum(["SUCCESS", "NON_CRITICAL_ERROR", "CRITICAL_ERROR"]).nullable(),
@@ -30,6 +49,10 @@ const sessionTransferSchema = z.object({
   currentTaskIndex: z.number().int(),
   startedAt: z.string().datetime().nullable(),
   completedAt: z.string().datetime().nullable(),
+  recordingUrl: z.string().nullable().optional(),
+  recordingNotes: z.string().nullable().optional(),
+  recordingMarkers: z.array(markerTransferSchema).optional(),
+  findings: z.array(findingTransferSchema).optional(),
   executions: z.array(executionTransferSchema),
 });
 
@@ -42,7 +65,7 @@ const participantTransferSchema = z.object({
 
 export const testTransferBundleSchema = z.object({
   format: z.literal("moderated-usability-test"),
-  version: z.literal(1),
+  version: z.union([z.literal(1), z.literal(2)]),
   exportedAt: z.string().datetime(),
   sourceTestId: z.string().uuid().optional(),
   test: z.object({

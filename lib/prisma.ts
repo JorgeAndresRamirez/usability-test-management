@@ -1,7 +1,11 @@
 import { PrismaClient } from "@/lib/generated/prisma/client";
 
+// Bump when the Prisma schema changes to invalidate the dev singleton after `prisma generate`.
+const PRISMA_CACHE_KEY = "synthesis-v1";
+
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
+  prismaCacheKey: string | undefined;
 };
 
 function withPgbouncerIfNeeded(url: string, usedDirectUrl: boolean): string {
@@ -26,15 +30,29 @@ function getDatabaseUrl(): string {
   return withPgbouncerIfNeeded(url, Boolean(direct));
 }
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
+function createPrismaClient(): PrismaClient {
+  return new PrismaClient({
     datasources: {
       db: { url: getDatabaseUrl() },
     },
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   });
+}
+
+if (
+  process.env.NODE_ENV !== "production" &&
+  globalForPrisma.prisma &&
+  globalForPrisma.prismaCacheKey !== PRISMA_CACHE_KEY
+) {
+  void globalForPrisma.prisma.$disconnect();
+  globalForPrisma.prisma = undefined;
+}
+
+export const prisma =
+  globalForPrisma.prisma ??
+  createPrismaClient();
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
+  globalForPrisma.prismaCacheKey = PRISMA_CACHE_KEY;
 }

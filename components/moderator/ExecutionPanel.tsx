@@ -531,17 +531,23 @@ export function ExecutionPanel({
       <Card>
         <CardContent className="py-12 text-center">
           <p className="text-lg font-semibold text-slate-900">Sesión completada</p>
-          <p className="mt-2 text-slate-500">
+          <p className="mt-2 text-muted-foreground">
             Todas las situaciones de {participantCode} han sido registradas.
           </p>
-          <Link
-            href={`/tests/${testId}/reports/sessions/${sessionId}`}
-            className={buttonVariants({
-              className: "mt-6",
-            })}
-          >
-            Ver observaciones de {participantCode}
-          </Link>
+          <div className="mt-6 flex flex-wrap justify-center gap-2">
+            <Link
+              href={`/tests/${testId}/sessions/${sessionId}/synthesis`}
+              className={buttonVariants()}
+            >
+              Documentar hallazgos
+            </Link>
+            <Link
+              href={`/tests/${testId}/reports/sessions/${sessionId}`}
+              className={buttonVariants({ variant: "outline" })}
+            >
+              Ver observaciones de {participantCode}
+            </Link>
+          </div>
         </CardContent>
       </Card>
     );

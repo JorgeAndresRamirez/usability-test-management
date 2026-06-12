@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { SessionDetailClient } from "@/components/reports/SessionDetailClient";
 import { buildExecutiveReport } from "@/lib/executive-report";
 import { prisma } from "@/lib/prisma";
+import { getSessionForSynthesis } from "@/lib/synthesis.server";
+import { mapSessionToSynthesis } from "@/lib/synthesis";
 
 type PageProps = {
   params: Promise<{ testId: string; sessionId: string }>;
@@ -15,7 +17,12 @@ export default async function SessionReportPage({ params }: PageProps) {
     where: { id: testId },
     include: {
       tasks: { orderBy: { orderIndex: "asc" } },
-      sessions: { include: { participant: true } },
+      sessions: {
+        include: {
+          participant: true,
+          recordingMarkers: true,
+        },
+      },
       _count: { select: { participants: true } },
     },
   });
@@ -30,6 +37,7 @@ export default async function SessionReportPage({ params }: PageProps) {
     include: {
       task: true,
       session: { include: { participant: true } },
+      findings: { orderBy: { orderIndex: "asc" } },
     },
   });
 
@@ -44,11 +52,15 @@ export default async function SessionReportPage({ params }: PageProps) {
   const session = report.sessionObservations.find((s) => s.sessionId === sessionId);
   if (!session) notFound();
 
+  const synthesisSession = await getSessionForSynthesis(sessionId);
+  const synthesis = synthesisSession ? mapSessionToSynthesis(synthesisSession) : null;
+
   return (
     <SessionDetailClient
       testId={testId}
       projectName={test.projectName}
       session={session}
+      synthesis={synthesis}
       allSessions={report.sessionObservations}
     />
   );
