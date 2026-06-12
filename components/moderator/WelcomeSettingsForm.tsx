@@ -9,10 +9,10 @@ import { z } from "zod";
 import { WelcomeScreen } from "@/components/participant/WelcomeScreen";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { TEST_CONFIG_LOCKED_MESSAGE } from "@/lib/test-editability";
+import { textLengthFromHtml } from "@/lib/rich-text-html";
 import {
   DEFAULT_WELCOME_INSTRUCTIONS,
   DEFAULT_WELCOME_TITLE,
@@ -20,10 +20,12 @@ import {
 
 const welcomeSettingsSchema = z.object({
   welcomeEnabled: z.boolean(),
-  welcomeTitle: z.string().min(1, "El título es obligatorio"),
-  welcomeInstructions: z
-    .string()
-    .min(10, "Escribe al menos una indicación para el participante"),
+  welcomeTitle: z.string().refine((value) => textLengthFromHtml(value) >= 1, {
+    message: "El título es obligatorio",
+  }),
+  welcomeInstructions: z.string().refine((value) => textLengthFromHtml(value) >= 10, {
+    message: "Escribe al menos una indicación para el participante",
+  }),
 });
 
 type WelcomeSettingsValues = z.infer<typeof welcomeSettingsSchema>;
@@ -46,7 +48,6 @@ export function WelcomeSettingsForm({
   const [isSaving, setIsSaving] = useState(false);
 
   const {
-    register,
     handleSubmit,
     watch,
     setValue,
@@ -91,6 +92,8 @@ export function WelcomeSettingsForm({
     setValue("welcomeInstructions", DEFAULT_WELCOME_INSTRUCTIONS);
   };
 
+  const fieldsDisabled = !editable || !welcomeEnabled;
+
   return (
     <Card className="mb-8 border-slate-200/80 shadow-sm">
       <CardHeader>
@@ -125,10 +128,15 @@ export function WelcomeSettingsForm({
 
             <div className="space-y-2">
               <Label htmlFor="welcomeTitle">Título</Label>
-              <Input
+              <RichTextEditor
                 id="welcomeTitle"
-                {...register("welcomeTitle")}
-                disabled={!editable || !welcomeEnabled}
+                value={welcomeTitle}
+                onChange={(html) => setValue("welcomeTitle", html, { shouldValidate: true })}
+                disabled={fieldsDisabled}
+                variant="inline"
+                minHeight="3rem"
+                placeholder="Antes de comenzar"
+                aria-invalid={Boolean(errors.welcomeTitle)}
               />
               {errors.welcomeTitle && (
                 <p className="text-xs text-red-600">{errors.welcomeTitle.message}</p>
@@ -137,19 +145,21 @@ export function WelcomeSettingsForm({
 
             <div className="space-y-2">
               <Label htmlFor="welcomeInstructions">Indicaciones</Label>
-              <Textarea
+              <RichTextEditor
                 id="welcomeInstructions"
-                rows={8}
-                {...register("welcomeInstructions")}
-                disabled={!editable || !welcomeEnabled}
-                placeholder="Una indicación por párrafo. Ej.: Activa tu cámara…"
+                value={welcomeInstructions}
+                onChange={(html) =>
+                  setValue("welcomeInstructions", html, { shouldValidate: true })
+                }
+                disabled={fieldsDisabled}
+                variant="list"
+                minHeight="12rem"
+                placeholder="Escribe las indicaciones para el participante…"
+                aria-invalid={Boolean(errors.welcomeInstructions)}
               />
               {errors.welcomeInstructions && (
                 <p className="text-xs text-red-600">{errors.welcomeInstructions.message}</p>
               )}
-              <p className="text-xs text-slate-400">
-                Cada párrafo se muestra como un punto en la pantalla del participante.
-              </p>
             </div>
 
             <div className="flex gap-2">
@@ -160,7 +170,7 @@ export function WelcomeSettingsForm({
                 type="button"
                 variant="outline"
                 onClick={restoreDefaults}
-                disabled={!editable || !welcomeEnabled}
+                disabled={fieldsDisabled}
               >
                 Restaurar texto sugerido
               </Button>

@@ -6,11 +6,10 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { TestNav } from "@/components/layout/TestNav";
 import { ParticipantsManager } from "@/components/moderator/ParticipantsManager";
 import { ProjectMetadataForm } from "@/components/moderator/ProjectMetadataForm";
-import { TestProjectActions } from "@/components/moderator/TestProjectActions";
 import { TestStatusManager } from "@/components/moderator/TestStatusManager";
 import { WelcomeSettingsForm } from "@/components/moderator/WelcomeSettingsForm";
 import { buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
 import {
   getTestEditabilityCounts,
@@ -100,19 +99,6 @@ export default async function TestDetailPage({ params }: PageProps) {
         initialTitle={test.welcomeTitle}
         initialInstructions={test.welcomeInstructions}
       />
-
-      <Card className="mb-8 border-slate-200/80 shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-base">Duplicar o eliminar</CardTitle>
-          <p className="text-sm text-slate-500">
-            Clona este proyecto para reutilizar situaciones y configuración sin participantes ni
-            resultados. Eliminar borra todo de forma permanente.
-          </p>
-        </CardHeader>
-        <CardContent>
-          <TestProjectActions testId={test.id} projectName={test.projectName} />
-        </CardContent>
-      </Card>
 
       <ParticipantsManager testId={test.id} initialParticipants={test.participants} />
     </>

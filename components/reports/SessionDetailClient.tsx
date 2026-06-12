@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { ParticipantAvatar } from "@/components/reports/ParticipantAvatar";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { RichTextContent } from "@/components/ui/rich-text-content";
 import { TestNav } from "@/components/layout/TestNav";
 import { Badge } from "@/components/ui/badge";
 import { SessionStatusBadge } from "@/components/ui/status-badge";
@@ -96,9 +97,11 @@ export function SessionDetailClient({
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <CardTitle className="text-base">{execution.situationLabel}</CardTitle>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                    {execution.scenarioNarrative}
-                  </p>
+                  <RichTextContent
+                    html={execution.scenarioNarrative}
+                    variant="prose"
+                    className="mt-2 text-sm text-slate-600"
+                  />
                 </div>
                 <Badge
                   variant={

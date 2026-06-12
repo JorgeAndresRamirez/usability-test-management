@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { textLengthFromHtml } from "@/lib/rich-text-html";
+
 export const taskTechnicalSchema = z.object({
   startPoint: z.string().min(1, "El punto de partida es obligatorio"),
   goalDescription: z.string().min(1, "La descripción de la meta es obligatoria"),
@@ -13,9 +15,9 @@ export const taskTechnicalSchema = z.object({
 });
 
 export const taskScenarioSchema = z.object({
-  scenarioNarrative: z
-    .string()
-    .min(10, "El escenario narrativo debe tener al menos 10 caracteres"),
+  scenarioNarrative: z.string().refine((value) => textLengthFromHtml(value) >= 10, {
+    message: "El escenario narrativo debe tener al menos 10 caracteres",
+  }),
 });
 
 export const taskFormSchema = taskTechnicalSchema.merge(taskScenarioSchema);

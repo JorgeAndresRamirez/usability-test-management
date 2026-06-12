@@ -11,14 +11,14 @@ Desarrollada para apoyar el flujo metodológico del SICAU: Think Aloud, eficacia
 ## Características principales
 
 ### Gestión de proyectos
-- Crear, clonar y eliminar proyectos de usabilidad
+- Crear, clonar y eliminar proyectos **desde el dashboard** (`/`)
 - Estados del proyecto: Borrador → Activo → Completado → Archivado
 - Metadatos editables (nombre, fechas, prototipo, perfil de usuarios) **solo antes** de registrar participantes o respuestas
-- Pantalla de bienvenida configurable antes del primer escenario
+- Pantalla de bienvenida configurable antes del primer escenario, con editor enriquecido (negrita, cursiva, viñetas)
 
 ### Constructor de situaciones (M2)
 - Ficha técnica por situación: punto de partida, meta, criterio de éxito, tiempo máximo
-- Escenario narrativo para el participante (sin exponer términos metodológicos)
+- Escenario narrativo para el participante (sin exponer términos metodológicos), con formato enriquecido
 - Satisfacción subjetiva opcional por situación
 - Reordenamiento drag-and-drop de situaciones
 
@@ -48,7 +48,7 @@ Desarrollada para apoyar el flujo metodológico del SICAU: Think Aloud, eficacia
 | Framework | [Next.js 16](https://nextjs.org/) (App Router) + TypeScript |
 | UI | [Tailwind CSS 4](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/) |
 | Base de datos | [PostgreSQL 16](https://www.postgresql.org/) + [Prisma 6](https://www.prisma.io/) |
-| Formularios | React Hook Form + Zod |
+| Formularios / texto enriquecido | React Hook Form + Zod + [Tiptap](https://tiptap.dev/) |
 | Gráficos | [Recharts](https://recharts.org/) |
 | PDF | [@react-pdf/renderer](https://react-pdf.org/) |
 
@@ -196,7 +196,7 @@ Con Docker, `DATABASE_URL` y `DIRECT_URL` pueden apuntar a la misma URL.
 
 ### Edición bloqueada con datos
 
-Los metadatos del proyecto y la pantalla de bienvenida solo se pueden editar mientras **no existan participantes ni respuestas** (`TaskExecution`). Para iterar sobre un diseño ya probado, usa **Clonar proyecto**.
+Los metadatos del proyecto y la pantalla de bienvenida solo se pueden editar mientras **no existan participantes ni respuestas** (`TaskExecution`). Para iterar sobre un diseño ya probado, clona el proyecto **desde el dashboard**.
 
 ---
 

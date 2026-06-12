@@ -61,6 +61,7 @@ export function TaskSetupClient({
     handleSubmit,
     reset,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
@@ -235,7 +236,7 @@ export function TaskSetupClient({
               <div className="grid gap-8 xl:grid-cols-2">
                 <TaskTechnicalForm register={register} errors={errors} />
                 <TaskScenarioForm
-                  register={register}
+                  setValue={setValue}
                   errors={errors}
                   watch={watch}
                   situationNumber={

@@ -128,3 +128,24 @@
     @apply font-sans;
   }
 }
+
+.rich-text-editor .ProseMirror {
+  min-height: inherit;
+}
+
+.rich-text-editor .ProseMirror:focus {
+  outline: none;
+}
+
+.rich-text-editor .ProseMirror ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+
+.rich-text-editor .ProseMirror p.is-editor-empty:first-child::before {
+  color: var(--color-muted-foreground, #94a3b8);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}

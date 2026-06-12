@@ -1,3 +1,5 @@
+import { RichTextContent } from "@/components/ui/rich-text-content";
+
 type ScenarioCardProps = {
   situationNumber: number;
   narrative: string;
@@ -20,9 +22,12 @@ export function ScenarioCard({
       <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">
         Situación {situationNumber}
       </p>
-      <p className="mt-8 text-2xl leading-relaxed font-light tracking-tight text-slate-800">
-        {narrative || "Escribe el escenario narrativo para previsualizarlo aquí."}
-      </p>
+      <RichTextContent
+        html={narrative}
+        variant="prose"
+        className="mt-8 text-2xl font-light tracking-tight text-slate-800"
+        emptyFallback="Escribe el escenario narrativo para previsualizarlo aquí."
+      />
     </article>
   );
 }
