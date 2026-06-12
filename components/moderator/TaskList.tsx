@@ -38,7 +38,7 @@ export function TaskList({
         <Card
           key={task.id}
           className={`border-slate-200/80 shadow-sm transition-colors ${
-            selectedTaskId === task.id ? "border-indigo-400 ring-1 ring-indigo-400/30" : ""
+            selectedTaskId === task.id ? "border-primary ring-1 ring-primary/30" : ""
           }`}
         >
           <CardHeader className="flex flex-row items-start justify-between gap-4 pb-2">

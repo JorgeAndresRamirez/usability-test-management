@@ -147,7 +147,7 @@ function WelcomePhasePanel({
           </p>
           {sessionStatus === "PENDING" ? (
             <Button
-              className="w-full bg-indigo-600 hover:bg-indigo-700"
+              className="w-full bg-primary hover:bg-primary/90"
               onClick={handleStartSession}
               disabled={isSaving}
             >
@@ -155,7 +155,7 @@ function WelcomePhasePanel({
             </Button>
           ) : (
             <Button
-              className="w-full bg-indigo-600 hover:bg-indigo-700"
+              className="w-full bg-primary hover:bg-primary/90"
               onClick={handleStartFirstSituation}
               disabled={isSaving}
             >
@@ -412,7 +412,7 @@ function ExecutionTaskWorkspace({
 
         {sessionStatus === "PENDING" ? (
           <Button
-            className="w-full bg-indigo-600 hover:bg-indigo-700"
+            className="w-full bg-primary hover:bg-primary/90"
             onClick={handleStart}
             disabled={isSaving}
           >
@@ -436,7 +436,7 @@ function ExecutionTaskWorkspace({
               </Button>
             )}
             <Button
-              className="w-full bg-indigo-600 hover:bg-indigo-700"
+              className="w-full bg-primary hover:bg-primary/90"
               onClick={handleSave}
               disabled={isSaving || !canComplete}
             >
@@ -537,7 +537,7 @@ export function ExecutionPanel({
           <Link
             href={`/tests/${testId}/reports/sessions/${sessionId}`}
             className={buttonVariants({
-              className: "mt-6 bg-indigo-600 text-white hover:bg-indigo-700",
+              className: "mt-6",
             })}
           >
             Ver observaciones de {participantCode}

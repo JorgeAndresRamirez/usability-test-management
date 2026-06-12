@@ -1,5 +1,5 @@
 const PARTICIPANT_PALETTE = [
-  { bg: "bg-indigo-100", text: "text-indigo-700", border: "border-indigo-200", fill: "#6366f1" },
+  { bg: "bg-accent", text: "text-accent-foreground", border: "border-primary/25", fill: "#5746AF" },
   { bg: "bg-emerald-100", text: "text-emerald-700", border: "border-emerald-200", fill: "#16a34a" },
   { bg: "bg-amber-100", text: "text-amber-700", border: "border-amber-200", fill: "#d97706" },
   { bg: "bg-rose-100", text: "text-rose-700", border: "border-rose-200", fill: "#e11d48" },

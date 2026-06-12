@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { SiteFooter } from "@/components/layout/SiteFooter";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -10,15 +11,24 @@ type AppShellProps = {
 
 export function AppShell({ children, className }: AppShellProps) {
   return (
-    <div className="min-h-screen bg-[#f8f9fb]">
-      <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/80 backdrop-blur-md">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-2.5">
-            <span className="flex size-7 items-center justify-center rounded-md bg-indigo-600 text-xs font-bold text-white">
-              TU
+    <div className="app-canvas flex min-h-screen flex-col">
+      <header className="sticky top-0 z-40 border-b border-border/80 bg-card/85 backdrop-blur-md">
+        <div className="mx-auto flex h-[3.75rem] max-w-6xl items-center justify-between px-6">
+          <Link href="/" className="group flex items-center gap-3">
+            <span
+              className="relative flex size-8 items-center justify-center rounded-lg bg-primary text-[10px] font-bold tracking-tight text-primary-foreground shadow-sm"
+              aria-hidden
+            >
+              <span className="absolute inset-0 rounded-lg bg-primary/20 blur-md transition-opacity group-hover:opacity-80" />
+              <span className="relative">TU</span>
             </span>
-            <span className="text-sm font-semibold tracking-tight text-slate-900">
-              Test de Usabilidad
+            <span className="flex flex-col leading-none">
+              <span className="font-display text-[15px] font-medium tracking-tight text-foreground">
+                Test de Usabilidad
+              </span>
+              <span className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
+                Moderación · Análisis
+              </span>
             </span>
           </Link>
           <nav className="flex items-center gap-1">
@@ -26,7 +36,7 @@ export function AppShell({ children, className }: AppShellProps) {
               href="/"
               className={cn(
                 buttonVariants({ variant: "ghost", size: "sm" }),
-                "text-slate-600 hover:text-slate-900",
+                "text-muted-foreground hover:text-foreground",
               )}
             >
               Proyectos
@@ -34,7 +44,10 @@ export function AppShell({ children, className }: AppShellProps) {
           </nav>
         </div>
       </header>
-      <main className={cn("mx-auto max-w-6xl px-6 py-10", className)}>{children}</main>
+      <main className={cn("mx-auto w-full max-w-6xl flex-1 px-6 py-10", className)}>
+        {children}
+      </main>
+      <SiteFooter />
     </div>
   );
 }

@@ -22,6 +22,7 @@ import { ScenarioDetailTable } from "@/components/reports/ScenarioDetailTable";
 import { SessionObservationsPanel } from "@/components/reports/SessionObservationsPanel";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { KpiCard } from "@/components/ui/kpi-card";
 import type { ExecutiveReport } from "@/lib/executive-report";
 import { formatSeconds } from "@/lib/executive-report";
 import { getParticipantPalette } from "@/lib/participant-identity";
@@ -32,33 +33,12 @@ type ReportsClientProps = {
   report: ExecutiveReport;
 };
 
-function KpiCard({
-  label,
-  value,
-  hint,
-  accent,
-}: {
-  label: string;
-  value: string;
-  hint?: string;
-  accent?: "green" | "amber" | "red" | "indigo";
-}) {
-  const accentClass = {
-    green: "text-green-600",
-    amber: "text-amber-600",
-    red: "text-red-600",
-    indigo: "text-indigo-600",
-  }[accent ?? "indigo"];
-
+function reportAccent(
+  tone: "green" | "amber" | "red" | "indigo",
+): "default" | "signal" | "warning" | "critical" {
   return (
-    <Card className="border-slate-200/80 shadow-sm">
-      <CardContent className="pt-6">
-        <p className="text-xs font-medium uppercase tracking-wider text-slate-400">{label}</p>
-        <p className={`mt-2 text-3xl font-semibold tracking-tight ${accentClass}`}>{value}</p>
-        {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
-      </CardContent>
-    </Card>
-  );
+    { green: "signal", amber: "warning", red: "critical", indigo: "default" } as const
+  )[tone];
 }
 
 export function ReportsClient({ testId, sessionId, report }: ReportsClientProps) {
@@ -105,9 +85,7 @@ export function ReportsClient({ testId, sessionId, report }: ReportsClientProps)
             </a>
             <a
               href={`/api/tests/${testId}/reports/export/pdf`}
-              className={buttonVariants({
-                className: "bg-indigo-600 text-white hover:bg-indigo-700",
-              })}
+              className={buttonVariants()}
             >
               <Download className="size-4" />
               Informe ejecutivo PDF
@@ -123,33 +101,45 @@ export function ReportsClient({ testId, sessionId, report }: ReportsClientProps)
           label="¿Se completaron las metas?"
           value={`${report.overallCompletionRate.toFixed(0)}%`}
           hint="Tasa de finalización (eficacia)"
-          accent={report.overallCompletionRate >= 80 ? "green" : report.overallCompletionRate >= 60 ? "amber" : "red"}
+          accent={reportAccent(
+            report.overallCompletionRate >= 80
+              ? "green"
+              : report.overallCompletionRate >= 60
+                ? "amber"
+                : "red",
+          )}
         />
         <KpiCard
           label="¿Fue sin fricción?"
           value={`${report.overallSuccessRate.toFixed(0)}%`}
           hint="Tasa de éxito puro"
-          accent={report.overallSuccessRate >= 80 ? "green" : report.overallSuccessRate >= 60 ? "amber" : "red"}
+          accent={reportAccent(
+            report.overallSuccessRate >= 80
+              ? "green"
+              : report.overallSuccessRate >= 60
+                ? "amber"
+                : "red",
+          )}
         />
         <KpiCard
           label="Brecha de recuperación"
           value={`${report.recoveryGap.toFixed(0)} pp`}
           hint="Finalización − éxito: errores recuperables"
-          accent={recoveryAccent}
+          accent={reportAccent(recoveryAccent)}
         />
         <KpiCard
           label="Éxito autónomo"
           value={`${report.autonomousSuccessRate.toFixed(0)}%`}
           hint="Sin solicitar ayuda al moderador"
-          accent={report.autonomousSuccessRate >= 70 ? "green" : "amber"}
+          accent={reportAccent(report.autonomousSuccessRate >= 70 ? "green" : "amber")}
         />
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <Card className="border-slate-200/80 shadow-sm">
+        <Card className="border-border/70 bg-card/90 shadow-sm">
           <CardHeader>
             <CardTitle className="text-base">¿Dónde se pierde el éxito?</CardTitle>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-muted-foreground">
               Compara finalización (meta lograda) vs éxito (sin errores). La brecha indica
               situaciones donde los usuarios terminan pero con fricción.
             </p>
@@ -182,10 +172,10 @@ export function ReportsClient({ testId, sessionId, report }: ReportsClientProps)
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200/80 shadow-sm">
+        <Card className="border-border/70 bg-card/90 shadow-sm">
           <CardHeader>
             <CardTitle className="text-base">Prioridad de mejora por situación</CardTitle>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-muted-foreground">
               Mayor puntuación = más urgente intervenir. Combina bajo éxito, brecha de recuperación
               y errores críticos.
             </p>
@@ -233,7 +223,7 @@ export function ReportsClient({ testId, sessionId, report }: ReportsClientProps)
           <Card className="border-slate-200/80 shadow-sm lg:col-span-2">
             <CardHeader>
               <CardTitle className="text-base">¿Todos tuvieron la misma experiencia?</CardTitle>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-muted-foreground">
                 Compara éxito total vs éxito autónomo por participante. Divergencias altas sugieren
                 problemas de consistencia o perfiles muy distintos.
               </p>

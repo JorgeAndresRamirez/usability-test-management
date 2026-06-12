@@ -9,7 +9,7 @@ import { ProjectMetadataForm } from "@/components/moderator/ProjectMetadataForm"
 import { TestStatusManager } from "@/components/moderator/TestStatusManager";
 import { WelcomeSettingsForm } from "@/components/moderator/WelcomeSettingsForm";
 import { buttonVariants } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { KpiCard } from "@/components/ui/kpi-card";
 import { prisma } from "@/lib/prisma";
 import {
   getTestEditabilityCounts,
@@ -65,18 +65,8 @@ export default async function TestDetailPage({ params }: PageProps) {
       />
 
       <div className="mb-8 grid gap-4 sm:grid-cols-2">
-        <Card className="border-slate-200/80 shadow-sm">
-          <CardContent className="pt-6">
-            <p className="text-xs uppercase tracking-wider text-slate-400">Situaciones</p>
-            <p className="mt-1 text-2xl font-semibold text-slate-900">{test._count.tasks}</p>
-          </CardContent>
-        </Card>
-        <Card className="border-slate-200/80 shadow-sm">
-          <CardContent className="pt-6">
-            <p className="text-xs uppercase tracking-wider text-slate-400">Participantes</p>
-            <p className="mt-1 text-2xl font-semibold text-slate-900">{test.participants.length}</p>
-          </CardContent>
-        </Card>
+        <KpiCard label="Situaciones" value={test._count.tasks} />
+        <KpiCard label="Participantes" value={test.participants.length} />
       </div>
 
       <TestStatusManager testId={test.id} initialStatus={test.status} />

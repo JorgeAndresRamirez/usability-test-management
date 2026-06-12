@@ -109,7 +109,7 @@ export function ParticipantsManager({
       <Card className="h-fit border-slate-200/80 shadow-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <UserPlus className="size-4 text-indigo-600" />
+            <UserPlus className="size-4 text-primary" />
             Registrar participante
           </CardTitle>
         </CardHeader>
@@ -127,13 +127,13 @@ export function ParticipantsManager({
               <Textarea
                 id="notes"
                 rows={3}
-                placeholder="Ej. Usuario frecuente del portal académico..."
+                placeholder="Ej. Usuario frecuente que reserva servicios en línea cada semana..."
                 {...register("notes")}
               />
             </div>
             <Button
               type="submit"
-              className="w-full bg-indigo-600 text-white hover:bg-indigo-700"
+              className="w-full"
               disabled={isSubmitting}
             >
               Agregar

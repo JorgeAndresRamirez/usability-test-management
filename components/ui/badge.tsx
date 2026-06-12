@@ -20,7 +20,7 @@ const badgeVariants = cva(
           "border-emerald-200 bg-emerald-50 text-emerald-800 [a]:hover:bg-emerald-100",
         warning:
           "border-amber-200 bg-amber-50 text-amber-800 [a]:hover:bg-amber-100",
-        info: "border-indigo-200 bg-indigo-50 text-indigo-800 [a]:hover:bg-indigo-100",
+        info: "border-primary/25 bg-accent text-accent-foreground [a]:hover:bg-accent/80",
         muted: "border-slate-200 bg-slate-100 text-slate-600 [a]:hover:bg-slate-200",
         ghost:
           "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",

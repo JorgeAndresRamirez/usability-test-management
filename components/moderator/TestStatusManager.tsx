@@ -69,7 +69,7 @@ export function TestStatusManager({ testId, initialStatus }: TestStatusManagerPr
               size="sm"
               variant={status === option ? "default" : "outline"}
               className={cn(
-                status === option && "bg-indigo-600 text-white hover:bg-indigo-700",
+                status === option && "bg-primary text-primary-foreground hover:bg-primary/90",
               )}
               disabled={isSaving}
               onClick={() => handleChange(option)}

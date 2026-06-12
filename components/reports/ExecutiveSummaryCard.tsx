@@ -28,7 +28,7 @@ export function ExecutiveSummaryCard({ report }: { report: ExecutiveReport }) {
   const topFriction = report.frictionSituations[0];
 
   return (
-    <Card className="mb-8 border-slate-200/80 shadow-sm">
+    <Card className="mb-8 border-border/70 bg-card/90 shadow-sm">
       <CardHeader>
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -119,7 +119,7 @@ export function ExecutiveSummaryCard({ report }: { report: ExecutiveReport }) {
             </ul>
             {report.insights.length > report.priorityActions.length && (
               <details className="mt-4 text-sm">
-                <summary className="cursor-pointer text-indigo-600 hover:underline">
+                <summary className="cursor-pointer text-primary hover:underline">
                   Ver {report.insights.length - report.priorityActions.length} hallazgo(s)
                   adicional(es)
                 </summary>

@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fraunces, Geist_Mono, Source_Sans_3 } from "next/font/google";
 
 import { Toaster } from "@/components/ui/sonner";
+import { SITE_AUTHOR } from "@/lib/site-author";
 
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const sourceSans = Source_Sans_3({
+  variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const fraunces = Fraunces({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
 });
 
 const geistMono = Geist_Mono({
@@ -16,8 +24,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Test de Usabilidad | SICAU",
+  title: "Test de Usabilidad",
   description: "Herramienta para creación, gestión y documentación de tests de usabilidad",
+  authors: [{ name: SITE_AUTHOR.name, url: SITE_AUTHOR.linkedin }],
+  creator: SITE_AUTHOR.name,
 };
 
 export default function RootLayout({
@@ -28,7 +38,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${sourceSans.variable} ${fraunces.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
         {children}

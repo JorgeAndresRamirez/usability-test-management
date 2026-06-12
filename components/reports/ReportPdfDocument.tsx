@@ -182,7 +182,7 @@ export function ReportPdfDocument({ report }: { report: ExecutiveReport }) {
         <View style={styles.cover}>
           <Text style={styles.brand}>INFORME EJECUTIVO DE USABILIDAD</Text>
           <Text style={styles.title}>{report.projectName}</Text>
-          <Text style={styles.subtitle}>Test de Usabilidad — SICAU</Text>
+          <Text style={styles.subtitle}>Test de Usabilidad</Text>
           <Text style={styles.meta}>Generado: {formatReportDate(report.generatedAt)}</Text>
         </View>
 

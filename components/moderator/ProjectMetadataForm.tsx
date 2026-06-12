@@ -176,7 +176,7 @@ export function ProjectMetadataForm({
                     href={initialPrototypeUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-1 block text-indigo-600 hover:underline"
+                    className="mt-1 block text-primary hover:underline"
                   >
                     {initialPrototypeUrl}
                   </a>

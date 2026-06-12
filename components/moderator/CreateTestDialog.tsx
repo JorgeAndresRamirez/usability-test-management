@@ -68,7 +68,7 @@ export function CreateTestDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button className="bg-indigo-600 text-white hover:bg-indigo-700">
+          <Button>
             <Plus className="size-4" />
             Nuevo proyecto
           </Button>
@@ -116,7 +116,7 @@ export function CreateTestDialog() {
             <Textarea
               id="userProfileCriteria"
               rows={4}
-              placeholder="Ej. Estudiantes activos que hayan usado el portal al menos una vez..."
+              placeholder="Ej. Personas que usan servicios en línea al menos una vez al mes..."
               {...register("userProfileCriteria")}
             />
             {errors.userProfileCriteria && (
@@ -127,11 +127,7 @@ export function CreateTestDialog() {
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancelar
             </Button>
-            <Button
-              type="submit"
-              className="bg-indigo-600 text-white hover:bg-indigo-700"
-              disabled={isSubmitting}
-            >
+            <Button type="submit" disabled={isSubmitting}>
               Crear proyecto
             </Button>
           </div>

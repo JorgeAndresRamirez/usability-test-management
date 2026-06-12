@@ -1,11 +1,11 @@
 "use client";
 
-import { Copy, Trash2 } from "lucide-react";
+import { Copy, Download, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 type TestProjectActionsProps = {
   testId: string;
@@ -73,6 +73,14 @@ export function TestProjectActions({
           <Copy className="size-3.5" />
           Clonar
         </Button>
+        <a
+          href={`/api/tests/${testId}/export`}
+          className={buttonVariants({ variant: "outline", size: "sm" })}
+          download
+        >
+          <Download className="size-3.5" />
+          Exportar
+        </a>
         <Button
           type="button"
           size="sm"
@@ -99,6 +107,14 @@ export function TestProjectActions({
         <Copy className="size-4" />
         Clonar proyecto
       </Button>
+      <a
+        href={`/api/tests/${testId}/export`}
+        className={buttonVariants({ variant: "outline" })}
+        download
+      >
+        <Download className="size-4" />
+        Exportar proyecto
+      </a>
       <Button
         type="button"
         variant="outline"

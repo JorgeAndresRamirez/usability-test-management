@@ -66,7 +66,7 @@ function MatrixCell({
       >
         {style.symbol}
         {flags.length > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-indigo-500 ring-2 ring-white" />
+          <span className="absolute -right-0.5 -top-0.5 size-2 rounded-full bg-primary ring-2 ring-white" />
         )}
       </span>
     </td>
@@ -104,7 +104,7 @@ export function ParticipantResultMatrixView({ matrix }: ParticipantResultMatrixP
             Error crítico
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <span className="size-2 rounded-full bg-indigo-500" />
+            <span className="size-2 rounded-full bg-primary" />
             Ayuda o falsa finalización
           </span>
         </div>

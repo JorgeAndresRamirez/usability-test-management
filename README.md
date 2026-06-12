@@ -1,17 +1,18 @@
-# Test de Usabilidad — SICAU
+# Test de Usabilidad
 
 Herramienta web para **planificar, ejecutar y documentar** pruebas de usabilidad moderadas. Separa de forma estricta la **vista del moderador** (configuración, cronómetro, métricas, observaciones) de la **vista del participante** (escenarios narrativos, sin carga metodológica visible).
 
 **Repositorio:** [github.com/JorgeAndresRamirez/usability-test-management](https://github.com/JorgeAndresRamirez/usability-test-management)
 
-Desarrollada para apoyar el flujo metodológico del SICAU: Think Aloud, eficacia vs éxito, errores críticos/no críticos, satisfacción opcional por situación e informes ejecutivos orientados a decisiones.
+Soporta Think Aloud, eficacia vs éxito, errores críticos/no críticos, satisfacción opcional por situación e informes ejecutivos orientados a decisiones.
 
 ---
 
 ## Características principales
 
 ### Gestión de proyectos
-- Crear, clonar y eliminar proyectos **desde el dashboard** (`/`)
+- Crear, clonar, exportar, importar y eliminar proyectos **desde el dashboard** (`/`)
+- **Exportar / importar** proyecto completo en JSON (metadatos, situaciones, participantes, sesiones y resultados) para trasladar entre equipos
 - Estados del proyecto: Borrador → Activo → Completado → Archivado
 - Metadatos editables (nombre, fechas, prototipo, perfil de usuarios) **solo antes** de registrar participantes o respuestas
 - Pantalla de bienvenida configurable antes del primer escenario, con editor enriquecido (negrita, cursiva, viñetas)
@@ -159,7 +160,9 @@ Con Docker, `DATABASE_URL` y `DIRECT_URL` pueden apuntar a la misma URL.
 |--------|------|-----|
 | `GET/POST` | `/api/tests` | Listar / crear proyectos |
 | `GET/PATCH/DELETE` | `/api/tests/[testId]` | Detalle, actualizar, eliminar |
-| `POST` | `/api/tests/[testId]/clone` | Duplicar proyecto (sin participantes ni resultados) |
+| `POST` | `/api/tests/[testId]/clone` | Duplicar proyecto (solo configuración, sin participantes ni resultados) |
+| `GET` | `/api/tests/[testId]/export` | Exportar proyecto completo (JSON) |
+| `POST` | `/api/tests/import` | Importar proyecto desde JSON |
 | `GET/POST` | `/api/tests/[testId]/participants` | Participantes |
 | `GET/POST` | `/api/tests/[testId]/tasks` | Situaciones |
 | `PATCH/DELETE` | `/api/tests/[testId]/tasks/[taskId]` | Editar / eliminar situación |
@@ -286,7 +289,7 @@ npm run db:generate
 npm run db:seed
 ```
 
-Crea un proyecto «Portal Estudiantil SICAU — Piloto» con situaciones, participante y sesión de ejemplo.
+Crea un proyecto «Plataforma de reservas en línea — Piloto» con situaciones, participante y sesión de ejemplo.
 
 ---
 
@@ -308,10 +311,18 @@ npm run build
 
 ## Licencia
 
-Proyecto académico / institucional del **SICAU**. Consulta con la institución antes de redistribuir o usar en producción fuera del ámbito autorizado.
+© Jorge Andrés Ramírez Sierra. Todos los derechos reservados.
+
+Proyecto de autor personal. Puedes usarlo, adaptarlo y redistribuirlo según los términos que definas en tu despliegue.
 
 ---
 
 ## Créditos
 
-Desarrollado para el **Sistema de Información del Centro de Apoyo Universitario (SICAU)** — pruebas de usabilidad moderadas con enfoque en eficacia, éxito autónomo y reportes accionables para equipos de diseño y producto.
+**Autor:** Jorge Andrés Ramírez Sierra — Ingeniero de Software, Máster en Diseño de Experiencia de Usuario (Colombia)
+
+- [LinkedIn](https://www.linkedin.com/in/jorge-andres-ramirez-sierra/)
+- [GitHub](https://github.com/JorgeAndresRamirez)
+- [jor.ramirez@pascualbravo.edu.co](mailto:jor.ramirez@pascualbravo.edu.co)
+
+Herramienta personal para pruebas de usabilidad moderadas, con enfoque en eficacia, éxito autónomo y reportes accionables para equipos de diseño y producto.

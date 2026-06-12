@@ -12,19 +12,23 @@ async function main() {
 
   const test = await prisma.usabilityTest.create({
     data: {
-      projectName: "Portal Estudiantil SICAU — Piloto",
+      projectName: "Plataforma de reservas en línea — Piloto",
       startDate: new Date("2026-06-01"),
       endDate: new Date("2026-06-30"),
       prototypeUrl: "https://figma.com/proto/ejemplo",
       userProfileCriteria:
-        "Estudiantes activos del programa que hayan usado al menos una vez el portal académico en el último semestre. Relación usuario-sistema: usuarios frecuentes con experiencia básica en trámites en línea.",
+        "Personas que reservan servicios en línea al menos una vez al mes. Relación usuario-sistema: usuarios habituales con experiencia básica en formularios y pagos digitales.",
       status: "ACTIVE",
+      welcomeEnabled: true,
+      welcomeTitle: "Bienvenido a la sesión",
+      welcomeInstructions:
+        "<p>Gracias por participar. Te mostraremos algunas situaciones cotidianas sobre una plataforma de reservas.</p><p>Piensa en voz alta mientras navegas: lo que buscas, lo que esperas y lo que te resulta confuso.</p><p>No hay respuestas correctas o incorrectas.</p>",
       participants: {
         create: [
           {
             code: "P01",
             orderIndex: 0,
-            notes: "Usuario frecuente del portal, realiza consulta de notas semanalmente.",
+            notes: "Usuario frecuente que reserva citas y servicios en línea cada semana.",
           },
         ],
       },
@@ -32,36 +36,36 @@ async function main() {
         create: [
           {
             orderIndex: 0,
-            startPoint: "Pantalla de inicio de sesión del portal",
-            goalDescription: "Consultar el estado de una solicitud de certificado",
+            startPoint: "Página de inicio de la plataforma",
+            goalDescription: "Consultar el estado de una reserva existente",
             successCriterion:
-              "El participante visualiza el detalle de la solicitud con estado actualizado",
+              "El participante visualiza el detalle de la reserva con su estado actualizado",
             maxTimeMinutes: 5,
             askSatisfaction: true,
             scenarioNarrative:
-              "Imagina que solicitaste un certificado de notas hace unos días y quieres saber si ya está listo. Entra al portal y averigua en qué estado se encuentra tu solicitud.",
+              "Hace unos días reservaste un servicio y quieres confirmar si sigue vigente. Entra a la plataforma y averigua en qué estado se encuentra tu reserva.",
           },
           {
             orderIndex: 1,
             startPoint: "Panel principal tras iniciar sesión",
-            goalDescription: "Actualizar el correo de contacto del perfil",
+            goalDescription: "Actualizar el número de teléfono de contacto",
             successCriterion:
-              "El participante guarda un nuevo correo y ve confirmación del cambio",
+              "El participante guarda un nuevo teléfono y ve confirmación del cambio",
             maxTimeMinutes: 4,
             askSatisfaction: false,
             scenarioNarrative:
-              "Has cambiado de correo personal y necesitas que las notificaciones del sistema lleguen a tu nueva dirección. Actualiza tu información de contacto en el portal.",
+              "Cambiaste de número y necesitas que la plataforma te envíe recordatorios al teléfono correcto. Actualiza tu información de contacto.",
           },
           {
             orderIndex: 2,
-            startPoint: "Sección de trámites en línea",
-            goalDescription: "Descargar un comprobante de matrícula",
+            startPoint: "Sección de historial de reservas",
+            goalDescription: "Descargar un comprobante de una reserva completada",
             successCriterion:
               "El participante descarga o visualiza el comprobante en PDF",
             maxTimeMinutes: 6,
             askSatisfaction: true,
             scenarioNarrative:
-              "Tu entidad financiera te pidió un comprobante de matrícula del semestre actual. Busca en el portal cómo obtener ese documento.",
+              "Necesitas un comprobante de una reserva que ya utilizaste. Busca en la plataforma cómo obtener ese documento.",
           },
         ],
       },

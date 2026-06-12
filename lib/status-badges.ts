@@ -21,7 +21,7 @@ export const TEST_STATUS_DESCRIPTIONS: Record<TestStatus, string> = {
 export const TEST_STATUS_BADGE_CLASS: Record<TestStatus, string> = {
   DRAFT: "border-slate-200 bg-slate-100 text-slate-700",
   ACTIVE: "border-emerald-200 bg-emerald-50 text-emerald-800",
-  COMPLETED: "border-indigo-200 bg-indigo-50 text-indigo-800",
+  COMPLETED: "border-primary/25 bg-accent text-accent-foreground",
   ARCHIVED: "border-zinc-200 bg-zinc-100 text-zinc-600",
 };
 

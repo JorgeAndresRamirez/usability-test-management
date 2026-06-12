@@ -175,7 +175,7 @@ export function TaskSetupClient({
               <Link
                 href={`/tests/${testId}/sessions/${sessionId}/run`}
                 className={buttonVariants({
-                  className: "bg-indigo-600 text-white hover:bg-indigo-700",
+                className: "bg-primary text-primary-foreground hover:bg-primary/90",
                 })}
               >
                 Ir al panel de ejecución
@@ -258,7 +258,7 @@ export function TaskSetupClient({
                 </Button>
                 <Button
                   type="submit"
-                  className="bg-indigo-600 hover:bg-indigo-700"
+                  className="bg-primary hover:bg-primary/90"
                   disabled={isSubmitting}
                 >
                   {selectedTaskId ? "Guardar cambios" : "Crear situación"}

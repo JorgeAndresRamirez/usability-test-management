@@ -13,27 +13,27 @@ export function WelcomeScreen({ title, instructions, preview = false }: WelcomeS
     <article
       className={`mx-auto w-full max-w-2xl ${
         preview
-          ? "rounded-xl border border-dashed border-slate-200 bg-slate-50/50 p-8"
-          : "px-4 py-6"
+          ? "rounded-2xl border border-dashed border-border bg-secondary/40 p-8"
+          : "animate-fade-up px-4 py-6"
       }`}
     >
-      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
         Bienvenida
       </p>
       <RichTextContent
         as="h1"
         html={title}
         variant="inline"
-        className="mt-6 text-3xl font-light tracking-tight text-slate-800"
+        className="font-display mt-8 text-balance text-4xl font-medium tracking-tight text-foreground"
       />
       {hasInstructions ? (
         <RichTextContent
           html={instructions}
           variant="list"
-          className="mt-10 text-lg font-light text-slate-700"
+          className="mt-12 text-lg leading-relaxed font-normal text-muted-foreground"
         />
       ) : (
-        <p className="mt-8 text-lg font-light leading-relaxed text-slate-500">
+        <p className="mt-10 text-lg leading-relaxed text-muted-foreground">
           Escribe las indicaciones para previsualizarlas aquí.
         </p>
       )}

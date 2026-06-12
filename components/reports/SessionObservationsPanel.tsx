@@ -86,7 +86,7 @@ export function SessionObservationsPanel({
                     key={session.sessionId}
                     className={cn(
                       "cursor-pointer transition-colors",
-                      isSelected && "bg-indigo-50/60",
+                      isSelected && "bg-accent/60",
                     )}
                     onClick={() => setSelectedSessionId(session.sessionId)}
                   >

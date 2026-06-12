@@ -11,6 +11,14 @@ type PresentationClientProps = {
   sessionId?: string;
 };
 
+function ParticipantCanvas({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="participant-canvas flex min-h-screen items-center justify-center px-8 py-16">
+      {children}
+    </div>
+  );
+}
+
 export function PresentationClient({ token, sessionId }: PresentationClientProps) {
   const [presentation, setPresentation] = useState<ParticipantPresentation | null>(null);
 
@@ -35,45 +43,45 @@ export function PresentationClient({ token, sessionId }: PresentationClientProps
 
   if (!presentation) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
-        <div className="size-1.5 animate-pulse rounded-full bg-slate-300" />
+      <div className="participant-canvas flex min-h-screen items-center justify-center">
+        <div className="size-2 animate-pulse rounded-full bg-primary/30" />
       </div>
     );
   }
 
   if (presentation.sessionStatus === "COMPLETED") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white px-8">
-        <div className="text-center">
-          <p className="text-2xl font-light tracking-tight text-slate-800">
+      <ParticipantCanvas>
+        <div className="animate-fade-up text-center">
+          <p className="font-display text-balance text-3xl font-medium tracking-tight text-foreground">
             Gracias por tu participación
           </p>
-          <p className="mt-3 text-sm text-slate-400">
+          <p className="mt-4 text-sm text-muted-foreground">
             Has completado todas las situaciones.
           </p>
         </div>
-      </div>
+      </ParticipantCanvas>
     );
   }
 
   if (presentation.welcome) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white px-8 py-16">
+      <ParticipantCanvas>
         <WelcomeScreen
           title={presentation.welcome.title}
           instructions={presentation.welcome.instructions}
         />
-      </div>
+      </ParticipantCanvas>
     );
   }
 
   if (!presentation.currentSituation) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white px-8">
-        <p className="text-center text-sm font-light text-slate-400">
-          Esperando al moderador para iniciar...
+      <ParticipantCanvas>
+        <p className="animate-fade-up text-center text-sm text-muted-foreground">
+          Esperando al moderador para iniciar…
         </p>
-      </div>
+      </ParticipantCanvas>
     );
   }
 
@@ -82,11 +90,11 @@ export function PresentationClient({ token, sessionId }: PresentationClientProps
   );
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white px-8 py-16">
+    <ParticipantCanvas>
       <ScenarioCard
         situationNumber={situationNumber}
         narrative={presentation.currentSituation.narrative}
       />
-    </div>
+    </ParticipantCanvas>
   );
 }
