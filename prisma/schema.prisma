@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TestStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+  ARCHIVED
+}
+
+enum SessionStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum TaskResult {
+  SUCCESS
+  NON_CRITICAL_ERROR
+  CRITICAL_ERROR
+}
+
+enum NonCriticalSeverity {
+  MILD
+  SEVERE
+}
+
+model UsabilityTest {
+  id                  String        @id @default(uuid())
+  projectName         String
+  startDate           DateTime?
+  endDate             DateTime?
+  prototypeUrl        String?
+  userProfileCriteria String        @db.Text
+  presentationToken   String        @unique @default(uuid())
+  status              TestStatus    @default(DRAFT)
+  welcomeEnabled      Boolean       @default(true)
+  welcomeTitle        String        @default("Antes de comenzar")
+  welcomeInstructions String        @default("Activa tu cámara y micrófono si el moderador te lo indica.\n\nDi en voz alta todo lo que piensas mientras usas el prototipo (método Think Aloud).\n\nNo hay respuestas correctas o incorrectas: nos interesa tu experiencia real.\n\nSi tienes dudas, pregunta al moderador antes de continuar.") @db.Text
+  participants        Participant[]
+  tasks               Task[]
+  sessions            TestSession[]
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+}
+
+model Participant {
+  id         String        @id @default(uuid())
+  testId     String
+  test       UsabilityTest @relation(fields: [testId], references: [id], onDelete: Cascade)
+  code       String
+  orderIndex Int
+  notes      String?       @db.Text
+  sessions   TestSession[]
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  @@unique([testId, code])
+  @@unique([testId, orderIndex])
+}
+
+model Task {
+  id                String          @id @default(uuid())
+  testId            String
+  test              UsabilityTest   @relation(fields: [testId], references: [id], onDelete: Cascade)
+  orderIndex        Int
+  startPoint        String          @db.Text
+  goalDescription   String          @db.Text
+  successCriterion  String          @db.Text
+  maxTimeMinutes    Int
+  scenarioNarrative String          @db.Text
+  askSatisfaction   Boolean         @default(false)
+  executions        TaskExecution[]
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@unique([testId, orderIndex])
+}
+
+model TestSession {
+  id               String          @id @default(uuid())
+  testId           String
+  test             UsabilityTest   @relation(fields: [testId], references: [id], onDelete: Cascade)
+  participantId    String
+  participant      Participant     @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  currentTaskIndex Int             @default(0)
+  status           SessionStatus   @default(PENDING)
+  executions       TaskExecution[]
+  startedAt        DateTime?
+  completedAt      DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@unique([testId, participantId])
+}
+
+model TaskExecution {
+  id                     String      @id @default(uuid())
+  sessionId              String
+  session                TestSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  taskId                 String
+  task                   Task        @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  result                 TaskResult?
+  taskCompleted          Boolean?
+  timeOnTaskSeconds      Int?
+  subjectiveSatisfaction Int?
+  nonCriticalErrorCount  Int                  @default(0)
+  nonCriticalSeverity    NonCriticalSeverity?
+  isFalseCompletion      Boolean              @default(false)
+  helpRequested          Boolean              @default(false)
+  thinkAloudNotes        String?              @db.Text
+  startedAt              DateTime?
+  completedAt            DateTime?
+  createdAt              DateTime    @default(now())
+  updatedAt              DateTime    @updatedAt
+
+  @@unique([sessionId, taskId])
+}
